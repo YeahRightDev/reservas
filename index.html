@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#04050a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Crypto">
+<title>Crypto · Lista de Acceso</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌙%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+  :root {
+    --void: #04050a;
+    --glass: rgba(20, 22, 40, .52);
+    --glass-hi: rgba(13, 14, 28, .86);
+    --stroke: rgba(255, 255, 255, .09);
+    --stroke-hi: rgba(255, 255, 255, .17);
+    --violet: #8b5cf6;
+    --magenta: #ff2e97;
+    --cyan: #22e4ff;
+    --ok: #34ffa0;
+    --warn: #ffd24a;
+    --bad: #ff3b6b;
+    --mute: #8b93a7;
+    --f-display: "Chakra Petch", ui-sans-serif, system-ui, sans-serif;
+    --f-body: "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  html { background: var(--void); }
+  body {
+    font-family: var(--f-body);
+    color: #eef0ff;
+    background: transparent;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior-y: contain;
+    min-height: 100vh;
+  }
+  /* Fondo: luces violeta / magenta / cian + rejilla tenue */
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: -2; pointer-events: none;
+    background:
+      radial-gradient(60% 38% at 8% -6%, rgba(139, 92, 246, .30), transparent 70%),
+      radial-gradient(52% 34% at 104% 104%, rgba(255, 46, 151, .22), transparent 70%),
+      radial-gradient(38% 28% at 98% 18%, rgba(34, 228, 255, .10), transparent 70%);
+  }
+  body::after {
+    content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size: 44px 44px;
+    -webkit-mask-image: radial-gradient(ellipse at 50% 0%, #000 0%, transparent 75%);
+    mask-image: radial-gradient(ellipse at 50% 0%, #000 0%, transparent 75%);
+  }
+  .display { font-family: var(--f-display); }
+  .tabular { font-variant-numeric: tabular-nums; }
+
+  .glass {
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid var(--stroke);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 10px 30px rgba(0,0,0,.35);
+  }
+  .glass-hi {
+    background: var(--glass-hi);
+    -webkit-backdrop-filter: blur(22px) saturate(150%);
+    backdrop-filter: blur(22px) saturate(150%);
+    border: 1px solid var(--stroke-hi);
+  }
+
+  /* ---------- Botones ---------- */
+  .btn {
+    min-height: 48px; padding: 0 16px; border-radius: 15px;
+    font-family: var(--f-body); font-weight: 800; font-size: 16px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    border: 1px solid transparent; cursor: pointer; color: #fff;
+    user-select: none; -webkit-user-select: none; touch-action: manipulation;
+    transition: transform .08s ease, filter .15s ease, box-shadow .15s ease;
+  }
+  .btn:active:not(:disabled) { transform: scale(.96); }
+  .btn:disabled { opacity: .42; cursor: not-allowed; box-shadow: none !important; }
+  .btn:focus-visible, .chip:focus-visible, .field:focus-visible, .search:focus-visible, .cnt-btn:focus-visible {
+    outline: 2px solid var(--cyan); outline-offset: 2px;
+  }
+  .btn-primary { background: linear-gradient(135deg, var(--magenta), var(--violet)); box-shadow: 0 8px 28px rgba(255,46,151,.35), inset 0 1px 0 rgba(255,255,255,.28); }
+  .btn-ok      { background: linear-gradient(135deg, #34ffa0, #12d6a0); color: #00281a; box-shadow: 0 6px 22px rgba(52,255,160,.28), inset 0 1px 0 rgba(255,255,255,.4); }
+  .btn-gold    { background: linear-gradient(135deg, #ffd24a, #ffae1f); color: #241a00; box-shadow: 0 6px 22px rgba(255,210,74,.22), inset 0 1px 0 rgba(255,255,255,.4); }
+  .btn-glass   { background: rgba(255,255,255,.06); border-color: var(--stroke-hi); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+  .btn-danger  { background: rgba(255,59,107,.10); color: #ff7b97; border-color: rgba(255,59,107,.5); }
+  .btn-danger.armed { background: var(--bad); color: #1b0008; }
+  .btn-done    { background: rgba(52,255,160,.08); color: var(--ok); border-color: rgba(52,255,160,.35); }
+
+  /* ---------- Marca ---------- */
+  .brand-name {
+    font-family: var(--f-display); font-weight: 700; font-size: 22px; line-height: 1; letter-spacing: .22em;
+    background: linear-gradient(90deg, #fff 10%, #c4b5fd 60%, #ff7ac0);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .brand-sub { font-size: 12px; color: var(--mute); font-weight: 700; }
+
+  /* ---------- Contadores ---------- */
+  .stat {
+    position: relative; overflow: hidden; border-radius: 18px; padding: 9px 6px 7px; text-align: center;
+    --c: #fff;
+  }
+  .stat::before {
+    content: ""; position: absolute; left: 14%; right: 14%; top: 0; height: 2px; border-radius: 0 0 4px 4px;
+    background: var(--c); box-shadow: 0 0 14px var(--c); opacity: .9;
+  }
+  .stat-label { font-size: 12px; font-weight: 700; color: var(--mute); }
+  .stat-num {
+    font-family: var(--f-display); font-weight: 700; font-size: 38px; line-height: 1.05;
+    font-variant-numeric: tabular-nums; color: var(--c); text-shadow: 0 0 18px color-mix(in srgb, var(--c) 55%, transparent);
+  }
+  .bump { animation: bump .35s ease; }
+  @keyframes bump { 0% { transform: scale(1); } 40% { transform: scale(1.18); } 100% { transform: scale(1); } }
+  .meter { height: 6px; border-radius: 99px; background: rgba(255,255,255,.07); overflow: hidden; }
+  .meter > div { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--cyan), var(--ok)); box-shadow: 0 0 14px rgba(52,255,160,.6); transition: width .45s ease; }
+
+  /* ---------- Buscador y chips ---------- */
+  .search {
+    width: 100%; height: 52px; border-radius: 16px; padding: 0 14px 0 44px; font-size: 17px; color: #fff;
+    background: rgba(4,5,12,.6) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%238b93a7' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E") no-repeat 14px center;
+    border: 1px solid var(--stroke-hi);
+  }
+  .search::placeholder { color: #6b7389; }
+  .chip {
+    flex: 0 0 auto; min-height: 40px; padding: 0 14px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+    border: 1px solid var(--stroke); background: rgba(255,255,255,.04); color: #c3c8da; font-weight: 700; font-size: 14px;
+  }
+  .chip.on {
+    color: #fff; border-color: rgba(167,139,250,.8);
+    background: linear-gradient(135deg, rgba(255,46,151,.28), rgba(139,92,246,.30));
+    box-shadow: 0 0 18px rgba(139,92,246,.35);
+  }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { scrollbar-width: none; }
+
+  /* ---------- Tarjetas ---------- */
+  .res-card { position: relative; overflow: hidden; border-radius: 20px; padding: 14px 14px 12px 18px; --st: var(--mute); }
+  .res-card::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--st); box-shadow: 0 0 18px var(--st);
+  }
+  .res-card.st-parcial   { --st: var(--warn); }
+  .res-card.st-completo  { --st: var(--ok); }
+  .res-card.st-cancelado { --st: var(--bad); opacity: .58; }
+  .res-card.st-cancelado .res-name { text-decoration: line-through; }
+  .res-name { font-weight: 800; font-size: 20px; line-height: 1.15; }
+  .pax-box { min-width: 58px; text-align: center; border-radius: 14px; padding: 6px 10px; background: rgba(255,255,255,.05); border: 1px solid var(--stroke); }
+  .pax-box b { display: block; font-family: var(--f-display); font-size: 26px; line-height: 1; font-weight: 700; }
+  .pax-box span { font-size: 11px; color: var(--mute); font-weight: 700; }
+  .rp-tag { font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; color: #d8ccff; background: rgba(139,92,246,.16); border: 1px solid rgba(139,92,246,.35); }
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 800;
+    padding: 4px 10px; border-radius: 999px; border: 1px solid transparent; white-space: nowrap;
+  }
+  .b-pendiente { background: rgba(139,147,167,.14); color: #d0d5e4; border-color: rgba(139,147,167,.38); }
+  .b-parcial   { background: rgba(255,210,74,.12);  color: var(--warn); border-color: rgba(255,210,74,.42); }
+  .b-completo  { background: rgba(52,255,160,.10);  color: var(--ok);   border-color: rgba(52,255,160,.42); }
+  .b-cancelado { background: rgba(255,59,107,.12);  color: #ff7b97;     border-color: rgba(255,59,107,.46); }
+  .mini { height: 4px; border-radius: 99px; background: rgba(255,255,255,.08); overflow: hidden; margin-top: 10px; }
+  .mini i { display: block; height: 100%; background: var(--st); box-shadow: 0 0 10px var(--st); }
+
+  /* ---------- Dock inferior ---------- */
+  .dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; padding: 0 12px calc(12px + env(safe-area-inset-bottom)); pointer-events: none; }
+  .dock-inner {
+    pointer-events: auto; max-width: 640px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.6fr; gap: 10px;
+    padding: 10px; border-radius: 26px; box-shadow: 0 -8px 40px rgba(0,0,0,.6), 0 0 0 1px rgba(139,92,246,.12);
+  }
+
+  /* ---------- Modales (bottom sheet) ---------- */
+  .modal { position: fixed; inset: 0; z-index: 50; display: none; align-items: flex-end; justify-content: center; }
+  .modal.is-open { display: flex; }
+  .backdrop { position: absolute; inset: 0; background: rgba(2,3,8,.76); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+  .sheet {
+    position: relative; width: 100%; max-width: 560px; max-height: 92vh; overflow-y: auto;
+    border-radius: 28px 28px 0 0; border-bottom: none;
+    border-top: 1px solid rgba(167,139,250,.5);
+    box-shadow: 0 -24px 70px rgba(139,92,246,.22);
+    padding: 12px 16px calc(18px + env(safe-area-inset-bottom));
+    animation: sheetUp .22s ease-out;
+  }
+  @keyframes sheetUp { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .grabber { width: 44px; height: 5px; border-radius: 9px; background: rgba(255,255,255,.2); margin: 0 auto 14px; }
+  .sheet h2 { font-family: var(--f-display); font-weight: 700; font-size: 22px; }
+  .sub { color: var(--mute); font-size: 14px; line-height: 1.45; margin-top: 4px; }
+  .field-label { display: block; font-size: 14px; font-weight: 700; color: #aab0c4; margin: 14px 0 6px; }
+  .field {
+    width: 100%; height: 56px; padding: 0 14px; font-size: 18px; color: #fff; border-radius: 15px;
+    background: rgba(4,5,12,.7); border: 1px solid var(--stroke-hi);
+  }
+  .field:focus { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(34,228,255,.18); outline: none; }
+  .field.err { border-color: var(--bad); box-shadow: 0 0 0 3px rgba(255,59,107,.25); }
+  textarea.field { height: auto; min-height: 150px; padding: 12px 14px; line-height: 1.5; resize: vertical; font-size: 16px; }
+  .qpax {
+    min-height: 44px; min-width: 52px; border-radius: 12px; cursor: pointer; font-weight: 800; font-size: 16px;
+    border: 1px solid var(--stroke-hi); background: rgba(255,255,255,.05); color: #e6e8f5;
+  }
+  .cnt-btn {
+    width: 76px; height: 76px; border-radius: 999px; display: flex; align-items: center; justify-content: center; cursor: pointer;
+    font-size: 44px; font-weight: 700; line-height: 1; color: #fff; touch-action: manipulation; user-select: none; -webkit-user-select: none;
+    background: rgba(255,255,255,.06); border: 1px solid var(--stroke-hi);
+  }
+  .cnt-btn:active:not(:disabled) { transform: scale(.93); background: rgba(255,255,255,.13); }
+  .cnt-btn:disabled { opacity: .3; cursor: not-allowed; }
+  .cnt-val { font-family: var(--f-display); font-weight: 700; font-size: 76px; line-height: 1; color: var(--ok); text-shadow: 0 0 26px rgba(52,255,160,.55); font-variant-numeric: tabular-nums; }
+  .x-btn { width: 44px; height: 44px; border-radius: 12px; border: 1px solid var(--stroke); background: rgba(255,255,255,.05); color: #cbd0e2; font-size: 18px; cursor: pointer; }
+
+  /* ---------- Carga masiva ---------- */
+  .bulk-row {
+    display: grid; grid-template-columns: 30px 1fr 64px 36px; gap: 8px; align-items: center;
+    padding: 8px; border-radius: 16px; border: 1px solid var(--stroke); background: rgba(255,255,255,.04);
+  }
+  .bulk-row.is-dup { border-color: rgba(255,210,74,.45); }
+  .bulk-row.is-bad { border-color: rgba(255,59,107,.5); }
+  .bulk-row.is-off { opacity: .55; }
+  .bulk-check { width: 26px; height: 26px; accent-color: #34ffa0; cursor: pointer; }
+  .bulk-in {
+    width: 100%; height: 42px; padding: 0 10px; border-radius: 11px; font-size: 16px; color: #fff;
+    background: rgba(4,5,12,.7); border: 1px solid var(--stroke-hi);
+  }
+  .bulk-in:focus { border-color: var(--cyan); outline: none; }
+  .bulk-pax { text-align: center; padding: 0 4px; }
+  .bulk-meta { display: flex; gap: 8px; align-items: center; margin-top: 4px; font-size: 12px; font-weight: 700; min-height: 16px; }
+  .bulk-del { width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--stroke); background: transparent; color: var(--mute); cursor: pointer; }
+  .bulk-foot {
+    position: sticky; bottom: calc(-18px - env(safe-area-inset-bottom)); margin: 14px -16px calc(-18px - env(safe-area-inset-bottom));
+    padding: 12px 16px calc(14px + env(safe-area-inset-bottom));
+    background: linear-gradient(to top, rgba(13,14,28,.98) 70%, transparent);
+  }
+
+  /* ---------- Toast ---------- */
+  .toast {
+    position: fixed; left: 12px; right: 12px; bottom: calc(104px + env(safe-area-inset-bottom));
+    max-width: 536px; margin: 0 auto; z-index: 70; display: flex; gap: 12px; align-items: center; justify-content: space-between;
+    padding: 12px 14px; border-radius: 16px; font-weight: 700; font-size: 15px;
+    background: rgba(14,16,32,.94); border: 1px solid var(--stroke-hi); box-shadow: 0 12px 40px rgba(0,0,0,.6);
+    opacity: 0; transform: translateY(10px); pointer-events: none; transition: opacity .2s, transform .2s;
+  }
+  .toast.show { opacity: 1; transform: none; pointer-events: auto; }
+  .toast.error { border-color: var(--bad); color: #ffd0da; }
+  .toast-action { min-height: 40px; padding: 0 14px; border-radius: 10px; border: 1px solid rgba(255,210,74,.5); background: rgba(255,210,74,.1); color: var(--warn); font-weight: 800; cursor: pointer; }
+
+  .skeleton { height: 124px; border-radius: 20px; background: var(--glass); border: 1px solid var(--stroke); animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: .5; } 50% { opacity: 1; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bump, .sheet, .skeleton { animation: none; }
+    .btn, .toast, .meter > div { transition: none; }
+  }
+</style>
+</head>
+
+<body>
+<noscript><p style="padding:24px;color:#fff">Esta aplicación necesita JavaScript.</p></noscript>
+
+<!-- ============ PANTALLA DE CONFIGURACIÓN (si faltan credenciales) ============ -->
+<div id="setupScreen" class="hidden fixed inset-0 z-[80] overflow-y-auto p-5" style="background:#04050a">
+  <div class="max-w-md mx-auto mt-10">
+    <p class="text-5xl mb-3">🔧</p>
+    <h2 class="display text-2xl font-bold mb-2">Falta conectar Firebase</h2>
+    <p class="text-slate-300 mb-4">Abre <code class="text-cyan-300">index.html</code>, busca el objeto <code class="text-cyan-300">firebaseConfig</code> y reemplaza los valores <code class="text-cyan-300">TU_...</code> con las credenciales de tu proyecto (Configuración del proyecto → Tus apps → Web).</p>
+    <p class="text-slate-400 text-sm">Confirma también que Firestore esté creado y que sus reglas permitan leer y escribir en la colección <code class="text-cyan-300">reservaciones</code>.</p>
+  </div>
+</div>
+
+<!-- ============ HEADER FIJO ============ -->
+<header class="sticky top-0 z-30 glass-hi" style="padding-top: env(safe-area-inset-top); border-width: 0 0 1px 0">
+  <div class="max-w-2xl mx-auto px-3 pt-2.5 pb-3">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 id="brandName" class="brand-name">CRYPTO</h1>
+        <p class="brand-sub mt-1">Control de acceso</p>
+      </div>
+      <div class="flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-full" style="background:rgba(255,255,255,.05);border:1px solid var(--stroke);color:#b7bdd0" aria-live="polite">
+        <span id="netDot" class="w-2.5 h-2.5 rounded-full" style="background:#475569"></span>
+        <span id="netLabel">Conectando…</span>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-2 mt-3">
+      <div class="stat glass" style="--c:#e9ecff">
+        <div class="stat-label">Reservados</div>
+        <div id="statRes" class="stat-num">0</div>
+      </div>
+      <div class="stat glass" style="--c:var(--ok)">
+        <div class="stat-label">Adentro</div>
+        <div id="statIn" class="stat-num">0</div>
+      </div>
+      <div class="stat glass" style="--c:var(--warn)">
+        <div class="stat-label">Pendientes</div>
+        <div id="statPend" class="stat-num">0</div>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 mt-2.5" aria-hidden="true">
+      <div class="meter flex-1"><div id="bar" style="width:0%"></div></div>
+      <span id="statPct" class="display text-xs font-semibold text-slate-400 tabular w-9 text-right">0%</span>
+    </div>
+
+    <div class="flex gap-2 mt-3">
+      <input id="search" class="search" type="search" placeholder="Buscar por nombre…" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Buscar reserva por nombre">
+      <button id="btnReport" class="btn btn-glass shrink-0" style="width:52px;height:52px;padding:0;font-size:22px" aria-label="Reporte de cierre">📋</button>
+    </div>
+
+    <div id="chips" class="flex gap-2 mt-2.5 overflow-x-auto no-scrollbar -mx-3 px-3"></div>
+  </div>
+</header>
+
+<!-- ============ LISTA ============ -->
+<main class="max-w-2xl mx-auto px-3 pt-3" style="padding-bottom: calc(128px + env(safe-area-inset-bottom))">
+  <div id="errorBanner" class="hidden mb-3 rounded-2xl p-3 text-sm" style="border:1px solid rgba(255,59,107,.55);background:rgba(255,59,107,.1);color:#ffc9d4"></div>
+  <div id="list" class="space-y-3" aria-live="polite"></div>
+</main>
+
+<!-- ============ DOCK INFERIOR ============ -->
+<div class="dock">
+  <div class="dock-inner glass-hi">
+    <button id="btnBulk" class="btn btn-glass" aria-label="Pegar lista masiva">📋 Lista</button>
+    <button id="btnNew" class="btn btn-primary text-lg">＋ Nueva Reserva</button>
+  </div>
+</div>
+
+<!-- ============ MODAL 1: NUEVA RESERVA ============ -->
+<div id="modalNew" class="modal" role="dialog" aria-modal="true" aria-labelledby="newTitle">
+  <div class="backdrop" data-close></div>
+  <form id="formNew" class="sheet glass-hi" novalidate>
+    <div class="grabber"></div>
+    <h2 id="newTitle">Nueva reserva</h2>
+
+    <label class="field-label" for="inNombre">Nombre del titular *</label>
+    <input id="inNombre" class="field" type="text" autocomplete="off" autocapitalize="words" maxlength="60" placeholder="Ej. Carlos Ramírez">
+
+    <label class="field-label" for="inPax">Total de personas (pax) *</label>
+    <input id="inPax" class="field" type="number" inputmode="numeric" pattern="[0-9]*" min="1" max="999" placeholder="Ej. 6">
+    <div class="flex gap-2 mt-2 overflow-x-auto no-scrollbar">
+      <button type="button" class="qpax" data-pax="2">2</button>
+      <button type="button" class="qpax" data-pax="4">4</button>
+      <button type="button" class="qpax" data-pax="6">6</button>
+      <button type="button" class="qpax" data-pax="8">8</button>
+      <button type="button" class="qpax" data-pax="10">10</button>
+      <button type="button" class="qpax" data-pax="15">15</button>
+    </div>
+
+    <label class="field-label" for="inRp">RP / Promotor (opcional)</label>
+    <input id="inRp" class="field" type="text" list="rpList" autocomplete="off" autocapitalize="words" maxlength="40" placeholder="Ej. Mau">
+    <datalist id="rpList"></datalist>
+
+    <div class="grid grid-cols-2 gap-3 mt-6">
+      <button type="button" class="btn btn-glass" data-close>Cancelar</button>
+      <button type="submit" id="btnSaveNew" class="btn btn-ok">Guardar</button>
+    </div>
+  </form>
+</div>
+
+<!-- ============ MODAL 2: CONTROL DE INGRESO ============ -->
+<div id="modalCheckin" class="modal" role="dialog" aria-modal="true" aria-labelledby="ciName">
+  <div class="backdrop" data-close></div>
+  <div class="sheet glass-hi">
+    <div class="grabber"></div>
+    <div class="flex items-start justify-between gap-3">
+      <div class="min-w-0">
+        <h2 id="ciName" class="break-words">—</h2>
+        <p id="ciMeta" class="sub"></p>
+      </div>
+      <span id="ciBadge" class="badge b-pendiente shrink-0"></span>
+    </div>
+
+    <div class="flex items-center justify-center gap-5 my-6">
+      <button id="cntMinus" type="button" class="cnt-btn" aria-label="Quitar una persona">−</button>
+      <div class="text-center" style="min-width:120px">
+        <div id="cntVal" class="cnt-val">0</div>
+        <div id="cntOf" class="text-slate-400 text-sm font-bold mt-2">adentro de 0 pax</div>
+      </div>
+      <button id="cntPlus" type="button" class="cnt-btn" aria-label="Agregar una persona">+</button>
+    </div>
+    <p id="cntHint" class="text-center text-sm font-bold text-slate-400 -mt-2 mb-5"></p>
+
+    <div class="space-y-3">
+      <button id="btnCiSave" type="button" class="btn btn-gold w-full">Guardar ingreso</button>
+      <button id="btnCiAll" type="button" class="btn btn-ok w-full">✅ Entraron Todos</button>
+      <button id="btnCiCancel" type="button" class="btn btn-danger w-full">🚫 Cancelar Reserva / No-Show</button>
+      <button type="button" class="btn btn-glass w-full" data-close>Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL 3: REPORTE DE CIERRE ============ -->
+<div id="modalReport" class="modal" role="dialog" aria-modal="true" aria-labelledby="repTitle">
+  <div class="backdrop" data-close></div>
+  <div class="sheet glass-hi">
+    <div class="grabber"></div>
+    <h2 id="repTitle" class="mb-3">Reporte de cierre</h2>
+    <pre id="reportText" class="whitespace-pre-wrap break-words text-[15px] leading-relaxed rounded-2xl p-4 font-mono text-slate-100 overflow-y-auto" style="max-height:48vh;background:rgba(4,5,12,.75);border:1px solid var(--stroke)"></pre>
+    <div class="grid grid-cols-2 gap-3 mt-4">
+      <button id="btnCopy" type="button" class="btn btn-glass">📄 Copiar</button>
+      <button id="btnWhats" type="button" class="btn btn-ok">💬 WhatsApp</button>
+    </div>
+    <button type="button" class="btn btn-glass w-full mt-3" data-close>Cerrar</button>
+  </div>
+</div>
+
+<!-- ============ MODAL 4: PEGAR LISTA MASIVA ============ -->
+<div id="modalBulk" class="modal" role="dialog" aria-modal="true" aria-labelledby="bulkTitle">
+  <div class="backdrop" data-close></div>
+  <div class="sheet glass-hi">
+    <div class="grabber"></div>
+    <div class="flex items-start justify-between gap-3">
+      <div>
+        <h2 id="bulkTitle">📋 Pegar lista masiva</h2>
+        <p class="sub">Una reserva por línea. Entiendo formatos como “Jorge - 10 personas”, “Carlos / 4 pax”, “valeria 3 personas” o “Sofía 5”.</p>
+      </div>
+      <button type="button" class="x-btn shrink-0" data-close aria-label="Cerrar">✕</button>
+    </div>
+
+    <label class="field-label" for="bulkText">Lista de reservas</label>
+    <textarea id="bulkText" class="field" rows="6" spellcheck="false" placeholder="Jorge - 10 personas&#10;Emmanuel - 6 personas&#10;valeria 3 personas&#10;Carlos / 4 pax&#10;Sofía 5"></textarea>
+    <div class="grid grid-cols-2 gap-2 mt-2">
+      <button id="bulkPaste" type="button" class="btn btn-glass">📥 Pegar del portapapeles</button>
+      <button id="bulkClear" type="button" class="btn btn-glass">Limpiar</button>
+    </div>
+
+    <label class="field-label" for="bulkRp">RP para toda la lista (opcional)</label>
+    <input id="bulkRp" class="field" type="text" list="rpList" autocomplete="off" autocapitalize="words" maxlength="40" placeholder="Ej. Mau">
+    <p class="sub">Si la lista trae encabezados como “RP Mau:” o “Mau:”, cada reserva toma el RP de su sección.</p>
+
+    <div id="bulkSummary" class="text-sm font-bold text-slate-300 mt-4 mb-2 min-h-[20px]"></div>
+    <div id="bulkRows" class="space-y-2"></div>
+
+    <div class="bulk-foot">
+      <button id="bulkImport" type="button" class="btn btn-ok w-full" disabled>Importar reservas</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TOAST ============ -->
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
+  collection, addDoc, updateDoc, writeBatch, doc, onSnapshot, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* =====================================================================
+   1) CONFIGURACIÓN  —  PEGA AQUÍ TUS CREDENCIALES DE FIREBASE
+   ===================================================================== */
+const firebaseConfig = {
+  apiKey:            "TU_API_KEY",
+  authDomain:        "TU_PROYECTO.firebaseapp.com",
+  projectId:         "TU_PROJECT_ID",
+  storageBucket:     "TU_PROYECTO.appspot.com",
+  messagingSenderId: "TU_SENDER_ID",
+  appId:             "TU_APP_ID"
+};
+const COLECCION    = "reservaciones";
+const NOMBRE_LOCAL = "Crypto";   // Aparece en el encabezado y en el reporte de cierre
+/* ===================================================================== */
+
+/* ---------- Utilidades ---------- */
+const $ = (id) => document.getElementById(id);
+const norm = (s) => String(s ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const sum = (arr, key) => arr.reduce((t, x) => t + (Number(x[key]) || 0), 0);
+const vibrate = (ms = 25) => { try { navigator.vibrate && navigator.vibrate(ms); } catch (_) {} };
+const calcEstado = (ing, total) => (ing <= 0 ? "pendiente" : ing >= total ? "completo" : "parcial");
+
+/* ---------- Estado de la app ---------- */
+let db = null;
+let colRef = null;
+let reservas = [];
+let loaded = false;
+let hasPendingWrites = false;
+let filtro = "todos";
+let busqueda = "";
+let checkinId = null;
+let counter = 0;
+let cancelArmed = false;
+const busy = new Set();
+
+document.title = `${NOMBRE_LOCAL} · Lista de Acceso`;
+$("brandName").textContent = NOMBRE_LOCAL.toUpperCase();
+
+/* ---------- Manifest PWA (generado en caliente para mantener un solo archivo) ---------- */
+try {
+  const icon = "data:image/svg+xml," + encodeURIComponent(
+    "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='#04050a'/><text x='50%' y='56%' font-size='300' text-anchor='middle' dominant-baseline='middle'>🌙</text></svg>"
+  );
+  const manifest = {
+    name: `${NOMBRE_LOCAL} · Lista de Acceso`, short_name: NOMBRE_LOCAL,
+    start_url: location.href, display: "standalone", orientation: "portrait",
+    background_color: "#04050a", theme_color: "#04050a",
+    icons: [{ src: icon, sizes: "512x512", type: "image/svg+xml", purpose: "any" }]
+  };
+  const link = document.createElement("link");
+  link.rel = "manifest";
+  link.href = URL.createObjectURL(new Blob([JSON.stringify(manifest)], { type: "application/manifest+json" }));
+  document.head.appendChild(link);
+} catch (_) {}
+
+/* ---------- Mantener pantalla encendida en la puerta ---------- */
+async function keepAwake() {
+  try {
+    if ("wakeLock" in navigator && document.visibilityState === "visible") {
+      await navigator.wakeLock.request("screen");
+    }
+  } catch (_) {}
+}
+document.addEventListener("visibilitychange", keepAwake);
+document.addEventListener("pointerdown", keepAwake, { once: true });
+keepAwake();
+
+/* ---------- Toast ---------- */
+let toastTimer = null;
+function hideToast() { $("toast").classList.remove("show"); }
+function toast(msg, { type = "ok", action = null } = {}) {
+  const el = $("toast");
+  el.innerHTML = "";
+  const span = document.createElement("span");
+  span.textContent = msg;
+  el.appendChild(span);
+  if (action) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "toast-action";
+    b.textContent = action.label;
+    b.addEventListener("click", () => { action.fn(); hideToast(); });
+    el.appendChild(b);
+  }
+  el.className = "toast show " + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(hideToast, action ? 5500 : 2800);
+}
+
+/* ---------- Modales ---------- */
+function openModal(id) {
+  $(id).classList.add("is-open");
+  document.body.style.overflow = "hidden";
+}
+function closeModal(id) {
+  $(id).classList.remove("is-open");
+  if (!document.querySelector(".modal.is-open")) document.body.style.overflow = "";
+  if (id === "modalCheckin") { checkinId = null; cancelArmed = false; }
+}
+function closeAllModals() {
+  document.querySelectorAll(".modal.is-open").forEach((m) => closeModal(m.id));
+}
+document.querySelectorAll(".modal").forEach((m) => {
+  m.addEventListener("click", (e) => { if (e.target.closest("[data-close]")) closeModal(m.id); });
+});
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeAllModals(); });
+
+/* ---------- Indicador de red / sincronización ---------- */
+function setNet(color, text) {
+  const dot = $("netDot");
+  dot.style.background = color;
+  dot.style.boxShadow = color === "#475569" ? "none" : `0 0 9px ${color}`;
+  $("netLabel").textContent = text;
+}
+function updateNet() {
+  if (!navigator.onLine) setNet("#ff3b6b", "Sin conexión");
+  else if (hasPendingWrites) setNet("#ffd24a", "Sincronizando…");
+  else if (loaded) setNet("#34ffa0", "En vivo");
+  else setNet("#475569", "Conectando…");
+}
+window.addEventListener("online", updateNet);
+window.addEventListener("offline", updateNet);
+
+/* ---------- Render: métricas ---------- */
+function setStat(id, value) {
+  const el = $(id);
+  const txt = String(value);
+  if (el.textContent !== txt) {
+    el.textContent = txt;
+    el.classList.remove("bump");
+    void el.offsetWidth;
+    el.classList.add("bump");
+  }
+}
+function renderStats() {
+  const activas = reservas.filter((r) => r.estado !== "cancelado");
+  const reservados = sum(activas, "pax_total");
+  const adentro = sum(activas, "pax_ingresados");
+  const pendientes = Math.max(0, reservados - adentro);
+  const pct = reservados ? Math.min(100, Math.round((adentro / reservados) * 100)) : 0;
+  setStat("statRes", reservados);
+  setStat("statIn", adentro);
+  setStat("statPend", pendientes);
+  $("bar").style.width = pct + "%";
+  $("statPct").textContent = pct + "%";
+}
+
+/* ---------- Render: chips de filtro ---------- */
+const FILTROS = [
+  { key: "todos", label: "Todos" },
+  { key: "pendiente", label: "Pendientes" },
+  { key: "parcial", label: "Parciales" },
+  { key: "completo", label: "Completos" },
+  { key: "cancelado", label: "Cancelados" }
+];
+function renderChips() {
+  const count = (k) => (k === "todos" ? reservas.length : reservas.filter((r) => r.estado === k).length);
+  $("chips").innerHTML = FILTROS.map((f) =>
+    `<button type="button" class="chip ${filtro === f.key ? "on" : ""}" data-filter="${f.key}">${f.label} (${count(f.key)})</button>`
+  ).join("");
+}
+
+/* ---------- Render: lista ---------- */
+function badgeInfo(r) {
+  switch (r.estado) {
+    case "completo":  return { cls: "b-completo",  text: `🟢 Completo (${r.pax_total}/${r.pax_total} pax)` };
+    case "parcial":   return { cls: "b-parcial",   text: `🟡 Parcial (${r.pax_ingresados}/${r.pax_total} pax)` };
+    case "cancelado": return { cls: "b-cancelado", text: "🔴 Cancelado" };
+    default:          return { cls: "b-pendiente", text: "⚪ Pendiente" };
+  }
+}
+function cardHTML(r) {
+  const b = badgeInfo(r);
+  const rp = r.rp ? `<span class="rp-tag">🎤 ${esc(r.rp)}</span>` : "";
+  const pct = r.pax_total ? Math.round((r.pax_ingresados / r.pax_total) * 100) : 0;
+  const prog = (r.estado === "parcial" || r.estado === "completo") ? `<div class="mini"><i style="width:${pct}%"></i></div>` : "";
+  let primary;
+  if (r.estado === "cancelado") {
+    primary = `<button type="button" class="btn btn-glass flex-1" data-act="reactivar" data-id="${r.id}">♻️ Reactivar</button>`;
+  } else if (r.estado === "completo") {
+    primary = `<button type="button" class="btn btn-done flex-1" disabled>✓ Adentro</button>`;
+  } else {
+    primary = `<button type="button" class="btn btn-ok flex-1" data-act="quick" data-id="${r.id}">⚡ Check-in Rápido</button>`;
+  }
+  return `
+  <article class="res-card glass st-${r.estado}">
+    <div class="cursor-pointer" data-act="opts" data-id="${r.id}">
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <h3 class="res-name break-words">${esc(r.nombre)}</h3>
+          <div class="flex flex-wrap items-center gap-2 mt-2">
+            <span class="badge ${b.cls}">${b.text}</span>
+            ${rp}
+          </div>
+        </div>
+        <div class="pax-box shrink-0"><b>${r.pax_total}</b><span>pax</span></div>
+      </div>
+      ${prog}
+    </div>
+    <div class="flex gap-2 mt-3">
+      ${primary}
+      <button type="button" class="btn btn-glass" data-act="opts" data-id="${r.id}" aria-label="Opciones y ajustar pax">⚙️ Ajustar</button>
+    </div>
+  </article>`;
+}
+function renderList() {
+  const list = $("list");
+  if (!loaded) {
+    list.innerHTML = '<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>';
+    return;
+  }
+  const q = norm(busqueda);
+  const rank = { pendiente: 0, parcial: 0, completo: 1, cancelado: 2 };
+  const visibles = reservas
+    .filter((r) => (filtro === "todos" ? true : r.estado === filtro))
+    .filter((r) => !q || norm(r.nombre).includes(q) || norm(r.rp).includes(q))
+    .sort((a, b) => rank[a.estado] - rank[b.estado] || a.nombre.localeCompare(b.nombre, "es", { sensitivity: "base" }));
+
+  if (!visibles.length) {
+    list.innerHTML = reservas.length
+      ? `<div class="text-center text-slate-400 py-14"><p class="text-4xl mb-2">🔍</p><p class="font-bold">Sin resultados</p><p class="text-sm">Prueba con otro nombre o cambia el filtro.</p></div>`
+      : `<div class="text-center text-slate-400 py-14"><p class="text-4xl mb-2">🌙</p><p class="font-bold">Aún no hay reservas</p><p class="text-sm">Toca “Nueva Reserva” o pega una lista completa con “Lista”.</p></div>`;
+    return;
+  }
+  list.innerHTML = visibles.map(cardHTML).join("");
+}
+function renderRpList() {
+  const rps = [...new Set(reservas.map((r) => r.rp).filter(Boolean))].sort((a, b) => a.localeCompare(b, "es"));
+  $("rpList").innerHTML = rps.map((n) => `<option value="${esc(n)}"></option>`).join("");
+}
+function renderAll() {
+  renderStats();
+  renderChips();
+  renderList();
+  renderRpList();
+  if (checkinId) {
+    const r = reservas.find((x) => x.id === checkinId);
+    if (!r) closeModal("modalCheckin"); else renderCheckin();
+  }
+  if ($("modalReport").classList.contains("is-open")) $("reportText").textContent = buildReport();
+  if ($("modalBulk").classList.contains("is-open")) refreshBulk(false);
+}
+
+/* ---------- Escrituras en Firestore ---------- */
+function guardar(id, ingresados, estado) {
+  const data = { pax_ingresados: ingresados, estado, actualizado: serverTimestamp() };
+  return updateDoc(doc(db, COLECCION, id), data).catch((err) => {
+    console.error(err);
+    toast("No se pudo guardar. Revisa tu conexión.", { type: "error" });
+  });
+}
+
+function checkinRapido(id) {
+  const r = reservas.find((x) => x.id === id);
+  if (!r || r.estado === "cancelado" || r.estado === "completo" || busy.has(id)) return;
+  busy.add(id); setTimeout(() => busy.delete(id), 700);
+  const prev = { ing: r.pax_ingresados, estado: r.estado };
+  vibrate(30);
+  guardar(id, r.pax_total, "completo");
+  toast(`✅ ${r.nombre} · ${r.pax_total} pax adentro`, {
+    action: { label: "Deshacer", fn: () => guardar(id, prev.ing, prev.estado) }
+  });
+}
+function reactivar(id) {
+  const r = reservas.find((x) => x.id === id);
+  if (!r) return;
+  vibrate(20);
+  guardar(id, 0, "pendiente");
+  toast(`♻️ ${r.nombre} reactivada`);
+}
+
+/* ---------- Modal 2: control de ingreso ---------- */
+function openCheckin(id) {
+  const r = reservas.find((x) => x.id === id);
+  if (!r) return;
+  checkinId = id;
+  counter = r.pax_ingresados;
+  cancelArmed = false;
+  renderCheckin();
+  openModal("modalCheckin");
+}
+function renderCheckin() {
+  const r = reservas.find((x) => x.id === checkinId);
+  if (!r) return;
+  const b = badgeInfo(r);
+  counter = Math.max(0, Math.min(counter, r.pax_total));
+  $("ciName").textContent = r.nombre;
+  $("ciMeta").textContent = `${r.pax_total} pax reservados` + (r.rp ? ` · RP: ${r.rp}` : "");
+  const badge = $("ciBadge");
+  badge.className = "badge shrink-0 " + b.cls;
+  badge.textContent = b.text;
+
+  const cancelado = r.estado === "cancelado";
+  $("cntVal").textContent = counter;
+  $("cntOf").textContent = `adentro de ${r.pax_total} pax`;
+  $("cntMinus").disabled = cancelado || counter <= 0;
+  $("cntPlus").disabled = cancelado || counter >= r.pax_total;
+  $("btnCiSave").disabled = cancelado || counter === r.pax_ingresados;
+  $("btnCiAll").disabled = cancelado || r.pax_ingresados === r.pax_total;
+
+  const delta = counter - r.pax_ingresados;
+  $("cntHint").textContent = cancelado
+    ? "Reserva cancelada. Reactívala para registrar ingresos."
+    : delta > 0 ? `+${delta} entran ahora · faltan ${r.pax_total - counter}`
+    : delta < 0 ? `${delta} (corrección) · faltan ${r.pax_total - counter}`
+    : `Sin cambios · faltan ${r.pax_total - counter}`;
+
+  const btn = $("btnCiCancel");
+  if (cancelado) {
+    btn.style.display = "";
+    btn.className = "btn btn-glass w-full";
+    btn.textContent = "♻️ Reactivar Reserva";
+  } else if (r.pax_ingresados > 0) {
+    btn.style.display = "none";           // ya hay gente adentro: no se puede marcar no-show
+  } else {
+    btn.style.display = "";
+    btn.className = "btn btn-danger w-full" + (cancelArmed ? " armed" : "");
+    btn.textContent = cancelArmed ? "⚠️ Toca otra vez para confirmar" : "🚫 Cancelar Reserva / No-Show";
+  }
+}
+$("cntMinus").addEventListener("click", () => { vibrate(10); counter--; renderCheckin(); });
+$("cntPlus").addEventListener("click", () => { vibrate(10); counter++; renderCheckin(); });
+$("btnCiSave").addEventListener("click", () => {
+  const r = reservas.find((x) => x.id === checkinId);
+  if (!r) return;
+  const nuevo = Math.max(0, Math.min(counter, r.pax_total));
+  const estado = calcEstado(nuevo, r.pax_total);
+  vibrate(30);
+  guardar(r.id, nuevo, estado);
+  closeModal("modalCheckin");
+  toast(`💾 ${r.nombre}: ${nuevo}/${r.pax_total} pax adentro`);
+});
+$("btnCiAll").addEventListener("click", () => {
+  const r = reservas.find((x) => x.id === checkinId);
+  if (!r) return;
+  vibrate(30);
+  guardar(r.id, r.pax_total, "completo");
+  closeModal("modalCheckin");
+  toast(`✅ ${r.nombre} · entraron todos (${r.pax_total})`);
+});
+$("btnCiCancel").addEventListener("click", () => {
+  const r = reservas.find((x) => x.id === checkinId);
+  if (!r) return;
+  if (r.estado === "cancelado") {
+    reactivar(r.id);
+    closeModal("modalCheckin");
+    return;
+  }
+  if (!cancelArmed) { cancelArmed = true; vibrate(40); renderCheckin(); return; }
+  vibrate(60);
+  guardar(r.id, 0, "cancelado");
+  closeModal("modalCheckin");
+  toast(`🔴 ${r.nombre} cancelada`, {
+    action: { label: "Deshacer", fn: () => guardar(r.id, 0, "pendiente") }
+  });
+});
+
+/* ---------- Modal 1: nueva reserva ---------- */
+function markErr(id) {
+  const el = $(id);
+  el.classList.add("err");
+  el.focus();
+  vibrate(60);
+  setTimeout(() => el.classList.remove("err"), 1400);
+}
+function openNew() {
+  $("formNew").reset();
+  openModal("modalNew");
+  setTimeout(() => $("inNombre").focus(), 80);
+}
+$("btnNew").addEventListener("click", openNew);
+$("formNew").querySelectorAll(".qpax").forEach((b) =>
+  b.addEventListener("click", () => { $("inPax").value = b.dataset.pax; vibrate(10); })
+);
+$("formNew").addEventListener("submit", (e) => {
+  e.preventDefault();
+  if (!colRef) return;
+  const nombre = $("inNombre").value.trim().replace(/\s+/g, " ");
+  const pax = parseInt($("inPax").value, 10);
+  const rp = $("inRp").value.trim().replace(/\s+/g, " ");
+  if (!nombre) return markErr("inNombre");
+  if (!Number.isInteger(pax) || pax < 1 || pax > 999) return markErr("inPax");
+
+  const btn = $("btnSaveNew");
+  btn.disabled = true;
+  setTimeout(() => (btn.disabled = false), 700);
+
+  addDoc(colRef, {
+    nombre,
+    pax_total: pax,
+    pax_ingresados: 0,
+    rp,
+    estado: "pendiente",
+    creado: serverTimestamp()
+  }).catch((err) => {
+    console.error(err);
+    toast("No se pudo crear la reserva. Revisa tu conexión.", { type: "error" });
+  });
+  vibrate(30);
+  closeModal("modalNew");
+  toast(`➕ ${nombre} · ${pax} pax`);
+});
+
+/* ---------- Modal 3: reporte de cierre ---------- */
+function buildReport() {
+  const activas = reservas.filter((r) => r.estado !== "cancelado");
+  const canceladas = reservas.filter((r) => r.estado === "cancelado");
+  const reservados = sum(activas, "pax_total");
+  const asistencia = sum(activas, "pax_ingresados");
+  const pct = reservados ? Math.round((asistencia / reservados) * 100) : 0;
+  const noLlegaron = Math.max(0, reservados - asistencia);
+
+  const porRp = new Map();
+  activas.forEach((r) => {
+    const k = r.rp || "Sin RP";
+    const o = porRp.get(k) || { res: 0, ing: 0, n: 0 };
+    o.res += r.pax_total; o.ing += r.pax_ingresados; o.n += 1;
+    porRp.set(k, o);
+  });
+  const lineasRp = [...porRp.entries()]
+    .sort((a, b) => b[1].ing - a[1].ing || b[1].res - a[1].res)
+    .map(([nombre, o]) => `• ${nombre}: ${o.ing}/${o.res} pax (${o.res ? Math.round((o.ing / o.res) * 100) : 0}%)`);
+
+  const fecha = new Date().toLocaleDateString("es-MX", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  const linea = "━━━━━━━━━━━━━━━━";
+  return [
+    `🌙 *REPORTE DE CIERRE · ${NOMBRE_LOCAL.toUpperCase()}*`,
+    `📅 ${fecha}`,
+    linea,
+    `🎟️ Reservados: ${reservados} pax (${activas.length} reservas)`,
+    `✅ Asistencia real: ${asistencia} pax`,
+    `📊 Porcentaje de asistencia: ${pct}%`,
+    `⏳ No llegaron: ${noLlegaron} pax`,
+    `🚫 Cancelados: ${canceladas.length} reservas (${sum(canceladas, "pax_total")} pax)`,
+    linea,
+    `🧑‍💼 *Desglose por RP*`,
+    ...(lineasRp.length ? lineasRp : ["• Sin reservas registradas"])
+  ].join("\n");
+}
+$("btnReport").addEventListener("click", () => {
+  $("reportText").textContent = buildReport();
+  openModal("modalReport");
+});
+async function copyText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch (_) {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.cssText = "position:fixed;opacity:0;top:0;left:0";
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    let ok = false;
+    try { ok = document.execCommand("copy"); } catch (_) {}
+    ta.remove();
+    return ok;
+  }
+}
+$("btnCopy").addEventListener("click", async () => {
+  const ok = await copyText(buildReport());
+  vibrate(20);
+  toast(ok ? "📄 Reporte copiado" : "No se pudo copiar. Selecciona el texto manualmente.", { type: ok ? "ok" : "error" });
+});
+$("btnWhats").addEventListener("click", () => {
+  window.open("https://wa.me/?text=" + encodeURIComponent(buildReport()), "_blank", "noopener");
+});
+
+/* =====================================================================
+   Modal 4: CARGA / PEGADO MASIVO DE RESERVAS
+   ===================================================================== */
+const NUM_WORDS = { un: 1, uno: 1, una: 1, dos: 2, tres: 3, cuatro: 4, cinco: 5, seis: 6, siete: 7, ocho: 8, nueve: 9, diez: 10, once: 11, doce: 12, trece: 13, catorce: 14, quince: 15, veinte: 20 };
+const UNIT = "(?:personas?|pers|pax|px|invitad[oa]s?|gente|people|ppl)";
+const RE_UNIT = new RegExp("(\\d{1,3})\\s*" + UNIT + "\\b", "i");
+const RE_WORD = new RegExp("\\b(" + Object.keys(NUM_WORDS).join("|") + ")\\s+" + UNIT + "\\b", "i");
+const RE_X = /\bx\s*(\d{1,3})\b/i;
+const RE_P = /\b(\d{1,3})p\b/i;
+const LETTER = /[A-Za-zÀ-ÿ]/;
+
+let bulkRows = [];
+let bulkSeq = 0;
+let bulkTimer = null;
+
+/* Quita prefijos de WhatsApp, viñetas y numeración: "[10:32, 10/10/2026] Luis: ", "- ", "3) " */
+function stripChat(l) {
+  l = l.replace(/^\s*\[[^\]]{4,40}\]\s*[^:]{1,40}:\s+/, "");
+  l = l.replace(/^\s*\d{1,2}\/\d{1,2}\/\d{2,4},?\s+\d{1,2}:\d{2}(?:\s?[ap]\.?\s?m\.?)?\s*-\s*[^:]{1,40}:\s+/i, "");
+  l = l.replace(/^\s*(?:[*•·▪►>]+\s*|-+\s+|\d{1,3}\s*[.)]\s+)/, "");
+  return l.trim();
+}
+
+/* Limpia el nombre: separadores sobrantes, palabras de relleno y mayúsculas uniformes */
+function cleanName(s) {
+  const seps = /^[\s\-–—\/|:=,.;•*]+|[\s\-–—\/|:=,.;•*]+$/g;
+  s = String(s || "").replace(/[()\[\]{}"“”]/g, " ").replace(/\s{2,}/g, " ");
+  s = s.replace(seps, "");
+  s = s.replace(/\b(?:con|para|son|somos|de|x|mesa|reserva|total)\s*$/i, "");
+  s = s.replace(seps, "").replace(/\s{2,}/g, " ").trim();
+  if (s && (s === s.toLocaleLowerCase("es") || s === s.toLocaleUpperCase("es"))) {
+    s = s.toLocaleLowerCase("es").replace(/(^|\s)(\S)/g, (m, a, b) => a + b.toLocaleUpperCase("es"));
+  }
+  return s.slice(0, 60);
+}
+
+/* Encuentra el número de personas en un fragmento y devuelve el resto como nombre */
+function extractPax(t) {
+  const cut = (m, pax) => ({ pax, rest: t.slice(0, m.index) + " " + t.slice(m.index + m[0].length) });
+  let m;
+  if ((m = t.match(RE_UNIT))) return cut(m, +m[1]);                       // "10 personas", "4 pax"
+  if ((m = t.match(RE_WORD))) return cut(m, NUM_WORDS[norm(m[1])]);       // "cinco personas"
+  if ((m = t.match(RE_X))) return cut(m, +m[1]);                          // "x3"
+  if ((m = t.match(RE_P))) return cut(m, +m[1]);                          // "5p"
+  if ((m = t.match(/(\d+)\s*$/)) && m[1].length <= 3) return { pax: +m[1], rest: t.slice(0, m.index) };   // "Sofía 5"
+  if ((m = t.match(/^\s*(\d+)\s+(?=[A-Za-zÀ-ÿ])/)) && m[1].length <= 3) return { pax: +m[1], rest: t.slice(m[0].length) }; // "5 Sofía"
+  const nums = [...t.matchAll(/\d+/g)].filter((x) => x[0].length <= 3);
+  if (nums.length === 1 && [...t.matchAll(/\d+/g)].length === 1) {
+    const x = nums[0];
+    return { pax: +x[0], rest: t.slice(0, x.index) + " " + t.slice(x.index + x[0].length) };
+  }
+  return { pax: null, rest: t };
+}
+
+/* Una línea con varias reservas: "Carlos 4 pax, Ana 3; Luis 2" */
+function splitPieces(l) {
+  if (/[;,]/.test(l)) {
+    const parts = l.split(/[;,]/).map((s) => s.trim()).filter(Boolean);
+    if (parts.length > 1 && parts.every((p) => /\d/.test(p) && LETTER.test(p))) return parts;
+  }
+  return [l];
+}
+
+function parseBulk(text) {
+  const rows = [];
+  let rp = "";
+  text.split(/\r?\n/).forEach((raw) => {
+    const line = stripChat(raw);
+    if (!line || !/[A-Za-zÀ-ÿ0-9]/.test(line)) return;
+    if (/^(?:total|subtotal|suma|lista|reservas|reservaciones)\b/i.test(line)) return;
+
+    if (!/\d/.test(line)) {
+      const h = line.match(/^(?:rp|pr|promotor(?:a)?)\b\s*[:\-–]?\s*(.*?)\s*:?\s*$/i);
+      if (h) { rp = cleanName(h[1]); return; }               // "RP Mau:" / "RP: Mau"
+      if (/:\s*$/.test(line)) { rp = cleanName(line.replace(/:\s*$/, "")); return; }  // "Mau:"
+    }
+    splitPieces(line).forEach((piece) => {
+      const { pax, rest } = extractPax(piece);
+      rows.push({ id: ++bulkSeq, raw: piece, nombre: cleanName(rest), pax, rpExplicit: rp, include: true, valid: false, dup: false });
+    });
+  });
+  return rows;
+}
+
+const rpOf = (r) => r.rpExplicit || $("bulkRp").value.trim().replace(/\s+/g, " ");
+
+function renderBulk() {
+  const box = $("bulkRows");
+  if (!bulkRows.length) {
+    box.innerHTML = $("bulkText").value.trim()
+      ? '<p class="sub" style="text-align:center;padding:14px 0">No encontré reservas en el texto. Cada línea necesita un nombre y un número de personas.</p>'
+      : "";
+    refreshBulk(true);
+    return;
+  }
+  box.innerHTML = bulkRows.map((r) => `
+    <div class="bulk-row" data-bi="${r.id}" title="${esc(r.raw)}">
+      <input type="checkbox" class="bulk-check" aria-label="Incluir esta reserva">
+      <div class="min-w-0">
+        <input class="bulk-in bulk-name" type="text" value="${esc(r.nombre)}" placeholder="Nombre" maxlength="60" autocomplete="off" autocapitalize="words">
+        <div class="bulk-meta"><span class="bulk-status"></span><span class="bulk-rp rp-tag" style="display:none"></span></div>
+      </div>
+      <input class="bulk-in bulk-pax" type="number" inputmode="numeric" min="1" max="999" value="${r.pax ?? ""}" placeholder="Pax" aria-label="Personas">
+      <button type="button" class="bulk-del" data-bdel="${r.id}" aria-label="Quitar de la lista">✕</button>
+    </div>`).join("");
+  refreshBulk(true);
+}
+
+/* Recalcula validez, duplicados y resumen sin reconstruir los inputs (así no se pierde el foco) */
+function refreshBulk(initial) {
+  const existing = new Set(reservas.map((r) => norm(r.nombre)));
+  const seen = new Set();
+  bulkRows.forEach((r) => {
+    const k = norm(r.nombre);
+    r.valid = !!k && Number.isInteger(r.pax) && r.pax >= 1 && r.pax <= 999;
+    r.dup = !!k && (existing.has(k) || seen.has(k));
+    if (k) seen.add(k);
+    if (initial) r.include = r.valid && !r.dup;
+    if (!r.valid) r.include = false;
+
+    const el = $("bulkRows").querySelector(`[data-bi="${r.id}"]`);
+    if (!el) return;
+    const chk = el.querySelector(".bulk-check");
+    chk.checked = r.include;
+    chk.disabled = !r.valid;
+    el.classList.toggle("is-bad", !r.valid);
+    el.classList.toggle("is-dup", r.valid && r.dup);
+    el.classList.toggle("is-off", !r.include);
+    const st = el.querySelector(".bulk-status");
+    if (!r.valid) { st.textContent = "✎ Revisa nombre y personas"; st.style.color = "#ff7b97"; }
+    else if (r.dup) { st.textContent = r.include ? "⚠ Ya existe (se duplicará)" : "⚠ Ya existe · omitida"; st.style.color = "var(--warn)"; }
+    else { st.textContent = "✓ Lista"; st.style.color = "var(--ok)"; }
+    const tag = el.querySelector(".bulk-rp");
+    const rp = rpOf(r);
+    tag.style.display = rp ? "" : "none";
+    tag.textContent = rp ? "🎤 " + rp : "";
+  });
+
+  const sel = bulkRows.filter((r) => r.include && r.valid);
+  const selPax = sum(sel.map((r) => ({ p: r.pax })), "p");
+  const dups = bulkRows.filter((r) => r.valid && r.dup).length;
+  const bad = bulkRows.filter((r) => !r.valid).length;
+  const extra = [dups ? `${dups} ya existe${dups > 1 ? "n" : ""}` : "", bad ? `${bad} por revisar` : ""].filter(Boolean).join(" · ");
+  $("bulkSummary").textContent = bulkRows.length
+    ? `${bulkRows.length} línea${bulkRows.length > 1 ? "s" : ""} detectada${bulkRows.length > 1 ? "s" : ""}` + (extra ? ` · ${extra}` : "")
+    : "";
+  const btn = $("bulkImport");
+  btn.disabled = sel.length === 0;
+  btn.textContent = sel.length
+    ? `Importar ${sel.length} reserva${sel.length > 1 ? "s" : ""} · ${selPax} pax`
+    : "Importar reservas";
+}
+
+function runParse() {
+  bulkRows = parseBulk($("bulkText").value);
+  renderBulk();
+}
+function resetBulk() {
+  $("bulkText").value = "";
+  $("bulkRp").value = "";
+  bulkRows = [];
+  renderBulk();
+}
+
+$("btnBulk").addEventListener("click", () => {
+  resetBulk();
+  openModal("modalBulk");
+  setTimeout(() => $("bulkText").focus(), 80);
+});
+$("bulkText").addEventListener("input", () => {
+  clearTimeout(bulkTimer);
+  bulkTimer = setTimeout(runParse, 220);
+});
+$("bulkClear").addEventListener("click", () => { resetBulk(); $("bulkText").focus(); });
+$("bulkRp").addEventListener("input", () => refreshBulk(false));
+$("bulkPaste").addEventListener("click", async () => {
+  try {
+    const t = await navigator.clipboard.readText();
+    if (!t.trim()) { toast("El portapapeles está vacío", { type: "error" }); return; }
+    $("bulkText").value = t;
+    runParse();
+  } catch (_) {
+    toast("No pude leer el portapapeles. Pega el texto en el cuadro.", { type: "error" });
+    $("bulkText").focus();
+  }
+});
+
+/* Edición de filas en la vista previa */
+$("bulkRows").addEventListener("input", (e) => {
+  const rowEl = e.target.closest("[data-bi]");
+  if (!rowEl) return;
+  const r = bulkRows.find((x) => String(x.id) === rowEl.dataset.bi);
+  if (!r) return;
+  if (e.target.classList.contains("bulk-name")) r.nombre = e.target.value;
+  if (e.target.classList.contains("bulk-pax")) r.pax = parseInt(e.target.value, 10) || null;
+  const wasValid = r.valid;
+  refreshBulk(false);
+  if (!wasValid && r.valid && !r.dup) { r.include = true; refreshBulk(false); }   // al corregirla, se incluye sola
+});
+$("bulkRows").addEventListener("change", (e) => {
+  if (!e.target.classList.contains("bulk-check")) return;
+  const rowEl = e.target.closest("[data-bi]");
+  const r = rowEl && bulkRows.find((x) => String(x.id) === rowEl.dataset.bi);
+  if (!r) return;
+  r.include = e.target.checked && r.valid;
+  refreshBulk(false);
+});
+$("bulkRows").addEventListener("click", (e) => {
+  const del = e.target.closest("[data-bdel]");
+  if (!del) return;
+  bulkRows = bulkRows.filter((x) => String(x.id) !== del.dataset.bdel);
+  const rowEl = del.closest("[data-bi]");
+  if (rowEl) rowEl.remove();
+  refreshBulk(false);
+});
+
+/* Importación por lotes (writeBatch, máx. 500 operaciones por lote) */
+$("bulkImport").addEventListener("click", () => {
+  if (!db || !colRef) return;
+  const items = bulkRows.filter((r) => r.include && r.valid);
+  if (!items.length) return;
+  const totalPax = items.reduce((t, r) => t + r.pax, 0);
+
+  for (let i = 0; i < items.length; i += 400) {
+    const batch = writeBatch(db);
+    items.slice(i, i + 400).forEach((r) => {
+      batch.set(doc(colRef), {
+        nombre: r.nombre.trim().replace(/\s+/g, " "),
+        pax_total: r.pax,
+        pax_ingresados: 0,
+        rp: rpOf(r),
+        estado: "pendiente",
+        creado: serverTimestamp()
+      });
+    });
+    batch.commit().catch((err) => {
+      console.error(err);
+      toast("Falló la importación de un lote. Revisa tu conexión.", { type: "error" });
+    });
+  }
+  vibrate([30, 40, 30]);
+  closeModal("modalBulk");
+  resetBulk();
+  toast(`📋 ${items.length} reserva${items.length > 1 ? "s" : ""} importada${items.length > 1 ? "s" : ""} · ${totalPax} pax`);
+});
+
+/* ---------- Eventos de lista, búsqueda y filtros ---------- */
+$("list").addEventListener("click", (e) => {
+  const el = e.target.closest("[data-act]");
+  if (!el) return;
+  const id = el.dataset.id;
+  switch (el.dataset.act) {
+    case "quick":     checkinRapido(id); break;
+    case "reactivar": reactivar(id); break;
+    case "opts":      openCheckin(id); break;
+  }
+});
+$("chips").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-filter]");
+  if (!b) return;
+  filtro = b.dataset.filter;
+  renderChips();
+  renderList();
+});
+$("search").addEventListener("input", (e) => {
+  busqueda = e.target.value;
+  renderList();
+});
+
+/* ---------- Firebase: conexión y sincronización en tiempo real ---------- */
+function normalizar(d) {
+  const x = d.data();
+  const total = Math.max(0, Number(x.pax_total) || 0);
+  const ing = Math.max(0, Math.min(Number(x.pax_ingresados) || 0, total));
+  return {
+    id: d.id,
+    nombre: String(x.nombre || "Sin nombre"),
+    pax_total: total,
+    pax_ingresados: x.estado === "cancelado" ? 0 : ing,
+    rp: String(x.rp || "").trim(),
+    estado: x.estado === "cancelado" ? "cancelado" : calcEstado(ing, total)
+  };
+}
+
+function iniciar() {
+  const faltan = String(firebaseConfig.apiKey).startsWith("TU_") || String(firebaseConfig.projectId).startsWith("TU_");
+  if (faltan) {
+    $("setupScreen").classList.remove("hidden");
+    loaded = true;
+    renderAll();
+    updateNet();
+    return;
+  }
+
+  renderAll(); // esqueletos de carga
+  updateNet();
+
+  const app = initializeApp(firebaseConfig);
+  try {
+    // Caché local: la app sigue funcionando si el WiFi del local se cae y sincroniza al volver.
+    db = initializeFirestore(app, { localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }) });
+  } catch (err) {
+    console.warn("Persistencia offline no disponible:", err);
+    db = getFirestore(app);
+  }
+  colRef = collection(db, COLECCION);
+
+  onSnapshot(
+    colRef,
+    { includeMetadataChanges: true },
+    (snap) => {
+      reservas = snap.docs.map(normalizar);
+      loaded = true;
+      hasPendingWrites = snap.metadata.hasPendingWrites;
+      $("errorBanner").classList.add("hidden");
+      renderAll();
+      updateNet();
+    },
+    (err) => {
+      console.error(err);
+      loaded = true;
+      const banner = $("errorBanner");
+      banner.textContent = err.code === "permission-denied"
+        ? "Firestore rechazó la lectura (permission-denied). Revisa las reglas de seguridad de tu base de datos."
+        : `No se pudo sincronizar con Firestore (${err.code || "error"}). Revisa tu configuración y tu conexión.`;
+      banner.classList.remove("hidden");
+      renderAll();
+      updateNet();
+    }
+  );
+}
+
+iniciar();
+</script>
+</body>
+</html>
