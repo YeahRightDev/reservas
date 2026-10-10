@@ -1,18 +1,38 @@
 {
+  "id": "https://reservas-ruddy.vercel.app/",
   "name": "CRYPTO Business Club",
   "short_name": "CRYPTO",
   "description": "Control de acceso y reservaciones para CRYPTO Business Club.",
-  "start_url": "./",
+  "start_url": "https://reservas-ruddy.vercel.app/",
+  "scope": "https://reservas-ruddy.vercel.app/",
   "display": "standalone",
   "background_color": "#07080b",
   "theme_color": "#07080b",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%2307080b'/%3E%3Ctext x='50%25' y='55%25' font-weight='900' font-size='280' text-anchor='middle' dominant-baseline='middle' fill='%23ffffff'%3EC%3C/text%3E%3C/svg%3E",
+      "src": "https://reservas-ruddy.vercel.app/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://reservas-ruddy.vercel.app/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "https://reservas-ruddy.vercel.app/icon-512.png",
       "sizes": "512x512",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://reservas-ruddy.vercel.app/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
